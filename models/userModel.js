@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const joi = require('joi');
+const bcrypt = require('bcrypt');
 
 const schema = mongoose.Schema;
 
@@ -12,8 +13,7 @@ const UserSchema = new schema({
 },
 {
     timestamps: true
-})
-
+});
 
 UserSchema.methods.joiValidate = (obj) => {
     const schema = {
@@ -24,6 +24,21 @@ UserSchema.methods.joiValidate = (obj) => {
         last_name: joi.types.String().min(3).max(20).required()
     }
     return joi.validate(schema, obj)
-}
+};
+
+UserSchema.post('save', (docs, next) => {
+    console.log(`New User was created and Saved!!`, docs);
+    next();
+})
+
+UserSchema.pre('save', async function(next){
+    const salt = await bcrypt.genSalt();
+    this.password = await bcrypt.hash(this.password, salt)
+    // .then((docs)=>{
+    //     console.log(docs);
+    // })
+    // .catch((err) => {console.error(err)})
+    next()
+})
 
 module.exports = mongoose.model('User', UserSchema);
