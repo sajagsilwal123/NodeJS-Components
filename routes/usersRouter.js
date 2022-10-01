@@ -1,6 +1,8 @@
 const express = require('express');
+const { isError } = require('joi');
 const router = express.Router();
 const User = require('../models/userModel');
+const userController = require('../controllers/userController');
 // const createUser = require('../controllers/userController');
 
 
@@ -17,10 +19,15 @@ router.get('/', function(req, res, next) {
     })
     .catch((err)=>{
       res.status(401);
-      res.send(err);
+      res.send(err)
+      // res.setHeader('Content-Type', 'text/json')
+      // res.json(err)
       console.error(err)
     })
 
 })
+
+//register
+.post('/register', userController.register)
 
 module.exports = router;
