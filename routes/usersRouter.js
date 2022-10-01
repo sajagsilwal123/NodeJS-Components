@@ -3,7 +3,6 @@ const { isError } = require('joi');
 const router = express.Router();
 const User = require('../models/userModel');
 const userController = require('../controllers/userController');
-// const createUser = require('../controllers/userController');
 
 
 /* GET users listing. */
