@@ -3,9 +3,9 @@ const DB = require('./../config');
 const User = require('./../models/userModel');
 const authSchema = require('../middlewares/auth');
 const createError = require('http-errors');
+const bcrypt = require('bcrypt');
 
-
-//CreateUSer
+//CreateUser
 const register = async (req, res, next) => {
     const result = await authSchema.validateAsync(req.body)
     const existEmail = await User.findOne({ email : result.email});
@@ -26,13 +26,39 @@ const register = async (req, res, next) => {
 
     User.create(result)
     .then((data) => {
+        console.log(data)
         res.send(data)
     })
     .catch((err)=>{
+        console.log(err)
         res.send(err)
     })
 
 }
 
+const validatePassword = async (req, res) => {
+    const username = req.body.username;
+    let password = req.body.password;
 
-module.exports = {register}
+
+    User.findOne({username : username}, (err, result)=>{
+        if(err){
+            console.log(err);
+            res.send('err')
+        }
+        result.comparePassword(password,(err, isMatch) => {
+            if(err){
+                throw err;
+                res.send(err)
+            }
+            console.log(isMatch);
+            
+            
+            res.send(isMatch)
+        })
+    });
+
+}
+
+
+module.exports = {register, validatePassword}

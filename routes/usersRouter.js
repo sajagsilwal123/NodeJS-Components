@@ -9,7 +9,7 @@ const userController = require('../controllers/userController');
 router.get('/', function(req, res, next) {
   res.send('respond with a resource');
 })
-.post('/', (req, res, next)=>{
+.post('/register', (req, res, next)=>{
   User.create(req.body)
     .then((data) => {
       res.status(200);
@@ -27,6 +27,6 @@ router.get('/', function(req, res, next) {
 })
 
 //register
-.post('/register', userController.register)
+.post('/verify', userController.validatePassword)
 
 module.exports = router;
