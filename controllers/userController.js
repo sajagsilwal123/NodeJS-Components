@@ -37,8 +37,7 @@ const register = async (req, res, next) => {
 }
 
 const validatePassword = async (req, res) => {
-    const username = req.body.username;
-    let password = req.body.password;
+    const {username, password} = req.body;
 
 
     User.findOne({username : username}, (err, result)=>{
