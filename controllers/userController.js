@@ -4,36 +4,32 @@ const User = require('./../models/userModel');
 const authSchema = require('../middlewares/auth');
 const createError = require('http-errors');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const validator = require('validator');
 
 //CreateUser
-const register = async (req, res, next) => {
+const register = async (req, res) => {
     const result = await authSchema.validateAsync(req.body)
-    const existEmail = await User.findOne({ email : result.email});
-    const existUsername = await User.findOne({ username: result.username });
+    const emailRecord = await User.findOne({ email : result.email});
 
-    if (existEmail || existUsername){
-        if(existEmail){
-            const err = createError.Conflict(`${result.email} already exists!!`);
-            res.send(err)
-            throw err;            
-        }
-        if(existUsername){
-            const err = createError.Conflict(`${result.username} already exists!!`);
-            res.send(err)
-            throw err;         
-        }
-    }
+    if(emailRecord){
+        return res.status(409).json({success:false,message:`${result.email} already exists!!`})
+    } 
 
-    User.create(result)
-    .then((data) => {
-        console.log(data)
-        res.send(data)
-    })
-    .catch((err)=>{
-        console.log(err)
-        res.send(err)
-    })
+    const usernameRecord = await User.findOne({ username: result.username });
 
+    if(usernameRecord){
+        return res.status(409).json({success:false,message:`${result.username} already exists!!`})
+    } 
+
+    const emailToken = jwt.sign({email:result.email,pinCode:'1234'},'b0ea7165dbf6a02f89ac24e2facc3646244e29aa',{expiresIn:'10s'})
+    
+    const userObj = new User({...result,emailToken});
+
+
+    const executeInsertion = await userObj.save();
+
+    if(executeInsertion)  return res.status(200).json({success:false,message:`${result.username} Created`,data:{user:executeInsertion}})
 }
 
 const validatePassword = async (req, res) => {
@@ -57,6 +53,23 @@ const validatePassword = async (req, res) => {
         })
     });
 
+}
+
+const verifyEmail = async(req,res) => {
+  // User requests
+  const email = req.query.email;
+
+  const isValidEmail = validator.isEmail(email);
+  
+  if(!isValidEmail) return res.status(400).json({success:false,message:'Invalid email address!'});
+
+  // Check the user record for given email
+  const userRecord = await User.findOne({email});
+
+  if(!userRecord) return res.status(404).json({success:false,message:'Cannot find user record. Please contact support.practice!'});
+
+  if(!userRecord.emailToken) return res.status(403).json({success:false,message:'Corrupted token! Please request new one!'})
+  
 }
 
 

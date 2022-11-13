@@ -46,4 +46,17 @@ const { attempt } = require("joi")
 // }
 
 // console.log(RemoveLeftRecursion('E -> E + T | T|Y|i'))
-console.log(process.env.NM_PASSWORD)
+
+const jwt = require('jsonwebtoken');
+
+const privateKey = 'qwerty'
+
+const emailToken = jwt.sign(  
+    {payload : 'sds'},
+    privateKey,
+    {
+        expiresIn: '1d'
+    }
+)
+
+console.log(emailToken)

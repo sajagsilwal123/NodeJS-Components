@@ -8,7 +8,9 @@ const UserSchema = new schema({
     password: String, 
     email: {type: String, unique: true},
     firstname: String, 
-    lastname: String     
+    lastname: String,
+    emailToken: String,
+    //role: {type:String,enum:['User','Admin'],default:'User'}     
 },
 {
     timestamps: true
