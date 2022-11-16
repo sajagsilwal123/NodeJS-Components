@@ -4,7 +4,6 @@ const TOKEN_KEY = process.env.JWT_KEY
 
 const verifyToken = async (req, res, next) => {
     const token = req.body.token || req.query.token || req.headers["x-access-token"];
-    console.log(token)
     if(!token)
         return res.status(403).json({success: false, message: 'No Tokens Entered'})
     try {
