@@ -6,17 +6,17 @@ const userController = require('../controllers/userController');
 
 
 /* GET users listing. */
-router.get('/', function(req, res, next) {
+router.get('/', function (req, res, next) {
   res.send('respond with a resource');
 })
-.post('/register', userController.register)
+  .post('/register', userController.register)
 
-//login
-.post('/getToken', userController.validatePassword, (req, res, next) => {
-  res.status(200).send('DONE!!')
-})
-.post('/login', auth, (req, res, next)=>{
-  res.status(200).send('HELLO')
-}) 
+  //login
+  .post('/getToken', userController.validatePassword, (req, res, next) => {
+    res.status(200).send('DONE!!')
+  })
+  .post('/login', auth, (req, res, next) => {
+    res.status(200).send('HELLO')
+  })
 
 module.exports = router;
