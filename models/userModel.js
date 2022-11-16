@@ -10,6 +10,8 @@ const UserSchema = new schema({
     firstname: String, 
     lastname: String,
     emailToken: String,
+    emailVerification: {type: Boolean, default: false},
+    userToken: String
     //role: {type:String,enum:['User','Admin'],default:'User'}     
 },
 {
@@ -35,18 +37,18 @@ UserSchema.post('save', (docs, next) => {
 
 UserSchema.pre('save', async function(next){
     const salt = await bcrypt.genSalt();
-    this.password = await bcrypt.hash(this.password, salt)
+    this.password = bcrypt.hash(this.password, salt)
     console.log(`PASSWORD ENCRYPTED SUCCESSFULLY!!`)
     next()
 })
 
-UserSchema.methods.comparePassword = function(candidatePassword, cb){
-    bcrypt.compare(candidatePassword, this.password, (err, result)=>{
-        if(err)
-            return cb(err, result);
-        else
-            return cb(err, result)
-    })
-}
+// UserSchema.methods.comparePassword = function(candidatePassword, cb){
+//     bcrypt.compare(candidatePassword, this.password, (err, result)=>{
+//         if(err)
+//             return cb(err, result);
+//         else
+//             return cb(err, result)
+//     })
+// }
 
 module.exports = mongoose.model('User', UserSchema);

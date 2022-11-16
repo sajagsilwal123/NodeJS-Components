@@ -1,5 +1,5 @@
 const express = require('express');
-const { isError } = require('joi');
+const auth = require('../middlewares/auth');
 const router = express.Router();
 const User = require('../models/userModel');
 const userController = require('../controllers/userController');
@@ -11,7 +11,12 @@ router.get('/', function(req, res, next) {
 })
 .post('/register', userController.register)
 
-//register
-.post('/verify', userController.validatePassword)
+//login
+.post('/getToken', userController.validatePassword, (req, res, next) => {
+  res.status(200).send('DONE!!')
+})
+.post('/login', auth, (req, res, next)=>{
+  res.status(200).send('HELLO')
+}) 
 
 module.exports = router;
